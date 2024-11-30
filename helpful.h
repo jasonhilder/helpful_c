@@ -18,14 +18,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* Definitions */
+// -------------------------------------- 
+// Func Definitions
+// -------------------------------------- 
 
 // Function declarations (API)
 int hf_read_file_to_buffer(char* file_path, char** out_buffer);
 
-/* implementation */
+// -------------------------------------- 
+// implementation Below
+// -------------------------------------- 
 
 #ifdef HELPFUL_IMPLEMENTATION
+
+// -------------------------------------- 
+// Macros:
+// -------------------------------------- 
+#define max(a,b)             \
+({                           \
+    __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a > _b ? _a : _b;       \
+})
+
+#define min(a,b)             \
+({                           \
+    __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a < _b ? _a : _b;       \
+})
+
+
+
+// -------------------------------------- 
+// Function defintions:
+// -------------------------------------- 
 
 // Takes file path and a buffer which will get 
 // reallocated to the full file size. 
