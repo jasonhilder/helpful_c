@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // -------------------------------------- 
 // Func Definitions
@@ -24,6 +25,7 @@
 
 // Function declarations (API)
 int hf_read_file_to_buffer(char* file_path, char** out_buffer);
+void hf_sort_int_array(int* array, size_t arrlen, const char* order);
 
 // -------------------------------------- 
 // implementation Below
@@ -48,10 +50,23 @@ int hf_read_file_to_buffer(char* file_path, char** out_buffer);
     _a < _b ? _a : _b;       \
 })
 
+// -------------------------------------- 
+// Comparison helpers:
+// -------------------------------------- 
+static inline int int_compare_asc(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
 
+static inline int int_compare_desc(const void* a, const void* b) {
+    return (*(int*)b - *(int*)a);
+}
 
 // -------------------------------------- 
 // Function defintions:
+// -------------------------------------- 
+
+// -------------------------------------- 
+// FILE I/O helpers:
 // -------------------------------------- 
 
 // Takes file path and a buffer which will get 
@@ -100,6 +115,36 @@ int hf_read_file_to_buffer(char* file_path, char** out_buffer)
     return 0;
 }
 
-#endif
+// -------------------------------------- 
+// array helpers:
+// -------------------------------------- 
 
+/**
+ * @brief Sorts an integer array in ascending or descending order.
+ * 
+ * This function uses the `qsort` function to sort an array of integers either
+ * in ascending or descending order, based on the provided `order` argument.
+ * The comparison is done using the standard integer comparison logic.
+ * 
+ * @param array Pointer to the integer array to be sorted.
+ * @param arrlen The length of the array.
+ * @param order A string that specifies the sorting order. It can be:
+ *              - "asc" for ascending order
+ *              - "desc" for descending order
+ *              If an invalid value is provided, the function will print an error message.
+ * 
+ * @note If the `order` parameter is not one of "asc" or "desc", an error message will be printed.
+ * @see qsort(3) for the underlying sorting algorithm used.
+ */
+void hf_sort_int_array(int* array, size_t arrlen, const char* order) {
+    if (strcmp(order, "asc") == 0) {
+        qsort(array, arrlen, sizeof(int), int_compare_asc);
+    } else if (strcmp(order, "desc") == 0) {
+        qsort(array, arrlen, sizeof(int), int_compare_desc);
+    } else {
+        printf("Invalid order: %s. Use 'asc' or 'desc'.\n", order);
+    }
+}
+
+#endif
 #endif 
