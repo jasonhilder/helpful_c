@@ -1,6 +1,6 @@
 /* helpful.h - v0.01 - Jason Hilder
 
-    A lot of inspiration/design from:
+    Heavily inspired and designed from:
     https://github.com/nothings/stb/
 
     This is a single-header-file library that provides 
@@ -9,7 +9,6 @@
     To use this library, do this in *one* C or C++ file:
         #define HELPFUL_IMPLEMENTATION
         #include "helpful.h"
-
 */
 
 #ifndef HELPFUL_H
@@ -24,7 +23,7 @@
 // -------------------------------------- 
 
 // Function declarations (API)
-int hf_read_file_to_buffer(char* file_path, char** out_buffer);
+int hf_read_file_to_buffer(char* file_path, char** out_buffer, int add_terminator);
 void hf_sort_int_array(int* array, size_t arrlen, const char* order);
 
 // -------------------------------------- 
@@ -64,15 +63,14 @@ static inline int int_compare_desc(const void* a, const void* b) {
 // -------------------------------------- 
 // Function defintions:
 // -------------------------------------- 
-
+// -------------------------------------- 
 // -------------------------------------- 
 // FILE I/O helpers:
 // -------------------------------------- 
-
 // Takes file path and a buffer which will get 
 // reallocated to the full file size. 
 // Note: buffer still needs to be manually free'd
-int hf_read_file_to_buffer(char* file_path, char** out_buffer)
+int hf_read_file_to_buffer(char* file_path, char** out_buffer, int add_terminator)
 {
     FILE *file = fopen(file_path, "rb");
     if(file == NULL)
@@ -92,7 +90,11 @@ int hf_read_file_to_buffer(char* file_path, char** out_buffer)
     rewind(file);
 
     // Reallocate memory for the buffer, check if realloc is successful
-    char *buffer = realloc(*out_buffer, file_size);
+    if(add_terminator == 1)
+        char *buffer = realloc(*out_buffer, file_size + 1);
+    else
+        char *buffer = realloc(*out_buffer, file_size);
+
     if (buffer == NULL)
     {
         perror("Memory allocation failed");
@@ -111,6 +113,10 @@ int hf_read_file_to_buffer(char* file_path, char** out_buffer)
         return -1;
     }
 
+    if(add_terminator == 1)
+        // Add the null terminator at the end of the buffer
+        (*out_buffer)[file_size] = '\0';
+
     fclose(file);
     return 0;
 }
@@ -118,7 +124,6 @@ int hf_read_file_to_buffer(char* file_path, char** out_buffer)
 // -------------------------------------- 
 // array helpers:
 // -------------------------------------- 
-
 /**
  * @brief Sorts an integer array in ascending or descending order.
  * 
@@ -147,4 +152,5 @@ void hf_sort_int_array(int* array, size_t arrlen, const char* order) {
 }
 
 #endif
+
 #endif 
