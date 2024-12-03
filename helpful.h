@@ -90,11 +90,8 @@ int hf_read_file_to_buffer(char* file_path, char** out_buffer, int add_terminato
     rewind(file);
 
     // Reallocate memory for the buffer, check if realloc is successful
-    if(add_terminator == 1)
-        char *buffer = realloc(*out_buffer, file_size + 1);
-    else
-        char *buffer = realloc(*out_buffer, file_size);
-
+    // Realloc with extra space if terminator is needed
+    char *buffer = realloc(*out_buffer, file_size + (add_terminator ? 1 : 0));
     if (buffer == NULL)
     {
         perror("Memory allocation failed");
@@ -113,9 +110,11 @@ int hf_read_file_to_buffer(char* file_path, char** out_buffer, int add_terminato
         return -1;
     }
 
-    if(add_terminator == 1)
-        // Add the null terminator at the end of the buffer
+    // Add null terminator if needed
+    if (add_terminator == 1)
+    {
         (*out_buffer)[file_size] = '\0';
+    }
 
     fclose(file);
     return 0;
